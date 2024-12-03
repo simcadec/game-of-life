@@ -1,0 +1,5 @@
+@layer reset, base, tokens, recipes, utilities;
+
+::selection {
+  background: var(--colors-teal-6);
+}
