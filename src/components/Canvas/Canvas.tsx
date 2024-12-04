@@ -39,17 +39,19 @@ export function Canvas({ dimensions }: Props) {
    * Handle mouseDown & mouseUp events
    */
   React.useEffect(() => {
-    const handleMouseDown = () => setIsMouseDown(true);
-    const handleMouseUp = () => setIsMouseDown(false);
+    return checkCanvas((canvas) => {
+      const handleMouseDown = () => setIsMouseDown(true);
+      const handleMouseUp = () => setIsMouseDown(false);
 
-    document.addEventListener("mousedown", handleMouseDown);
-    document.addEventListener("mouseup", handleMouseUp);
+      canvas.addEventListener("mousedown", handleMouseDown);
+      canvas.addEventListener("mouseup", handleMouseUp);
 
-    return () => {
-      document.removeEventListener("mousedown", handleMouseDown);
-      document.removeEventListener("mouseup", handleMouseUp);
-    };
-  }, []);
+      return () => {
+        canvas.removeEventListener("mousedown", handleMouseDown);
+        canvas.removeEventListener("mouseup", handleMouseUp);
+      };
+    });
+  }, [checkCanvas]);
 
   // Keep track of the last cell that was flipped
   const lastFlippedCell = React.useRef<Cell | null>(null);
@@ -84,10 +86,10 @@ export function Canvas({ dimensions }: Props) {
         }
       };
 
-      document.addEventListener("mousemove", handleMouseMove);
+      canvas.addEventListener("mousemove", handleMouseMove);
 
       return () => {
-        document.removeEventListener("mousemove", handleMouseMove);
+        canvas.removeEventListener("mousemove", handleMouseMove);
       };
     });
   }, [checkCanvas, flipCell, isMouseDown, boardSize]);
