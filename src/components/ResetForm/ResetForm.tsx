@@ -44,10 +44,8 @@ export function ResetForm() {
           <FormLabel>Base</FormLabel>
           <BaseBoardSelect
             name="base"
-            size={"sm"}
-            onValueChange={(detail) =>
-              setSelectedBase(detail.value[0] as BaseBoard)
-            }
+            size="sm"
+            onValueChange={setSelectedBase}
           />
         </Stack>
 

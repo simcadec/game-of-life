@@ -17,9 +17,6 @@ export function Sidebar() {
   const { generationCount, goNext, isRunning, setSpeed, speed, toggle } =
     useGame();
 
-  // Store live values to keep the UI in sync
-  const [formSpeed, setFormSpeed] = React.useState(speed);
-
   return (
     <Stack css={{ bg: "bg.default", p: 3, justifyContent: "space-between" }}>
       <div>
@@ -37,27 +34,7 @@ export function Sidebar() {
           Controls
         </Heading>
 
-        <Slider
-          defaultValue={[speed]}
-          min={10}
-          max={2000}
-          onValueChangeEnd={(details) => {
-            setSpeed(details.value[0]);
-          }}
-          onValueChange={(details) => {
-            setFormSpeed(details.value[0]);
-          }}
-          step={10}
-          marks={[
-            { value: 10, label: "0.01s" },
-            { value: 500, label: "0.5s" },
-            { value: 1000, label: "1s" },
-            { value: 2000, label: "2s" },
-          ]}
-          css={{ mb: 12, colorPalette: formSpeed <= 200 ? "red" : undefined }}
-        >
-          Speed {formSpeed}ms - {Number(1000 / formSpeed).toFixed(2)} FPS
-        </Slider>
+        <SliderSpeed speed={speed} onValueChangeEnd={setSpeed} />
 
         <HStack>
           <Button onClick={toggle} className={css({ flex: 1 })}>
@@ -90,3 +67,41 @@ export function Sidebar() {
     </Stack>
   );
 }
+
+// Slider are complex components and need to be optimized
+const SliderSpeed = React.memo(function SliderSpeed({
+  speed,
+  onValueChangeEnd,
+}: SliderSpeedProps) {
+  // Store live values to keep the UI in sync
+  const [formSpeed, setFormSpeed] = React.useState(speed);
+
+  return (
+    <Slider
+      defaultValue={[speed]}
+      min={10}
+      max={2000}
+      onValueChangeEnd={(details) => {
+        onValueChangeEnd(details.value[0]);
+      }}
+      onValueChange={(details) => {
+        setFormSpeed(details.value[0]);
+      }}
+      step={10}
+      marks={[
+        { value: 10, label: "0.01s" },
+        { value: 500, label: "0.5s" },
+        { value: 1000, label: "1s" },
+        { value: 2000, label: "2s" },
+      ]}
+      css={{ mb: 12, colorPalette: formSpeed <= 200 ? "red" : undefined }}
+    >
+      Speed {formSpeed}ms - {Number(1000 / formSpeed).toFixed(2)} FPS
+    </Slider>
+  );
+});
+
+type SliderSpeedProps = {
+  speed: number;
+  onValueChangeEnd: (speed: number) => void;
+};

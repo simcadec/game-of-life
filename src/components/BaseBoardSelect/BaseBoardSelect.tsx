@@ -1,11 +1,13 @@
-import type { SelectRootProps } from "@ark-ui/react/select";
+import * as React from "react";
+import type {
+  SelectRootProps,
+  SelectValueChangeDetails,
+} from "@ark-ui/react/select";
 import { Check, ChevronDown } from "lucide-react";
 
 import type { SelectVariantProps } from "styled-system/recipes";
 
 import { Select, createListCollection } from "~/components/ui/select";
-
-type Props = Omit<SelectRootProps<unknown>, "collection"> & SelectVariantProps;
 
 export type BaseBoard = (typeof items)[number]["value"];
 
@@ -27,14 +29,25 @@ const collection = createListCollection({
   items,
 });
 
-export function BaseBoardSelect(props: Props) {
+export type BaseBoardSelectProps = SelectVariantProps &
+  Omit<SelectRootProps<unknown>, "collection" | "onValueChange"> & {
+    onValueChange?: (value: BaseBoard) => void;
+  };
+
+export const BaseBoardSelect = React.memo(function BaseBoardSelect(
+  props: BaseBoardSelectProps,
+) {
+  const handleOnValueChange = (details: SelectValueChangeDetails) =>
+    props.onValueChange?.(details.value[0] as BaseBoard);
+
   return (
     <Select.Root
+      {...props}
       defaultValue={[items[0].value]}
       positioning={{ sameWidth: true }}
       collection={collection}
       size="sm"
-      {...props}
+      onValueChange={handleOnValueChange}
     >
       <Select.Control>
         <Select.Trigger>
@@ -60,4 +73,4 @@ export function BaseBoardSelect(props: Props) {
       <Select.HiddenSelect />
     </Select.Root>
   );
-}
+});
