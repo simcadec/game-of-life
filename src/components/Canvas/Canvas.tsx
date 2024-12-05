@@ -5,7 +5,7 @@ import type { Cell } from "~/utils/board";
 import { drawBoard, getCellFromCanvasEvent } from "~/utils/canvas";
 
 export function Canvas({ dimensions }: Props) {
-  const { board, flipCell, boardSize } = useGame();
+  const { board, boardSize, flipCell } = useGame();
   const [isMouseDown, setIsMouseDown] = React.useState(false);
 
   const canvasRef = React.useRef<HTMLCanvasElement>(null);

@@ -12,7 +12,7 @@ import { useGame } from "~/contexts/Game";
 import { mappingPatternMinSize } from "~/utils/patterns";
 
 export function ResetForm() {
-  const { boardSize, resetBoard } = useGame();
+  const { boardSize, reset } = useGame();
 
   const handleReset: React.FormEventHandler<HTMLFormElement> = (evt) => {
     evt.preventDefault(); // Do not post!
@@ -21,7 +21,7 @@ export function ResetForm() {
     const formData = new FormData(evt.currentTarget);
 
     // reset the board
-    resetBoard({
+    reset({
       base: formData.get("base") as BaseBoard,
       size: Number(formData.get("size")),
       file: formData.get("file") as File,

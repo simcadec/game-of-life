@@ -4,7 +4,7 @@ import { Slider } from "~/components/ui/slider";
 import { useGame } from "~/contexts/Game";
 
 export function TimeTravel() {
-  const { isStopped, timeTravelTo, generationCount } = useGame();
+  const { isStopped, goTo, generationCount } = useGame();
 
   // Used to temporally store the current generation count
   const [generationInternal, setGenerationInternal] = React.useState(
@@ -38,7 +38,7 @@ export function TimeTravel() {
         { value: max, label: max },
       ]}
       onValueChange={(details) => {
-        timeTravelTo(details.value[0]);
+        goTo(details.value[0]);
       }}
       css={{ mb: 6 }}
     >

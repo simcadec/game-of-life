@@ -14,14 +14,8 @@ import { useGame } from "~/contexts/Game";
 import { TimeTravel } from "../TimeTravel";
 
 export function Sidebar() {
-  const {
-    speed,
-    setSpeed,
-    toggle,
-    isStopped,
-    applyNextGeneration,
-    generationCount,
-  } = useGame();
+  const { generationCount, goNext, isStopped, setSpeed, speed, toggle } =
+    useGame();
 
   // Store live values to keep the UI in sync
   const [formSpeed, setFormSpeed] = React.useState(speed);
@@ -79,7 +73,7 @@ export function Sidebar() {
           </Button>
 
           <Button
-            onClick={applyNextGeneration}
+            onClick={goNext}
             disabled={!isStopped}
             className={css({ flex: 1 })}
           >
