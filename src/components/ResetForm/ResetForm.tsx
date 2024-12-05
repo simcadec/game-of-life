@@ -9,6 +9,7 @@ import { Button } from "~/components/ui/button";
 import { FormLabel } from "~/components/ui/form-label";
 import { Input } from "~/components/ui/input";
 import { useGame } from "~/contexts/Game";
+import { mappingPatternMinSize } from "~/utils/patterns";
 
 export function ResetForm() {
   const { boardSize, resetBoard } = useGame();
@@ -29,6 +30,12 @@ export function ResetForm() {
 
   // Store the current base selectedBase
   const [selectedBase, setSelectedBase] = React.useState<BaseBoard>();
+
+  // Board min size depends on the selected base
+  const minSize =
+    selectedBase && isKeyOfObject(selectedBase, mappingPatternMinSize)
+      ? mappingPatternMinSize[selectedBase]
+      : 3;
 
   return (
     <form onSubmit={handleReset} className={css({ mb: 6 })}>
@@ -51,7 +58,7 @@ export function ResetForm() {
             name="size"
             size={"sm"}
             defaultValue={boardSize}
-            min={3}
+            min={minSize}
             max={1000}
             disabled={selectedBase === "file"}
           />
@@ -70,4 +77,12 @@ export function ResetForm() {
       ) : null}
     </form>
   );
+}
+
+// TODO: move to some TS utils, or better use sindresorhus/ts-extra
+function isKeyOfObject<T extends object>(
+  key: string | number | symbol,
+  obj: T,
+): key is keyof T {
+  return key in obj;
 }

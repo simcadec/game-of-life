@@ -1,4 +1,5 @@
 import { countLivingNeighbors, willCellBeAlive } from "~/utils/game";
+import { beacon, blinker, glider, gliderGun, pulsar, toad } from "./patterns";
 
 export type Board = boolean[][];
 
@@ -91,117 +92,42 @@ export function getCheckeredBoard(boardSize: number): Board {
  * Get a new board with a Blinker GoF pattern
  */
 export function getBlinkerBoard(boardSize: number): Board {
-  const pattern = [
-    [0, 1, 0],
-    [0, 1, 0],
-    [0, 1, 0],
-  ];
-
-  return getNewBoard(boardSize, mappingFnPattern(pattern, boardSize));
+  return getNewBoard(boardSize, mappingFnPattern(blinker, boardSize));
 }
 
 /**
  * Get a new board with a Glider GoF pattern
  */
 export function getGliderBoard(boardSize: number): Board {
-  const pattern = [
-    [0, 1, 0],
-    [0, 0, 1],
-    [1, 1, 1],
-  ];
-
-  return getNewBoard(boardSize, mappingFnPattern(pattern, boardSize));
+  return getNewBoard(boardSize, mappingFnPattern(glider, boardSize));
 }
 
 /**
  * Get a new board with a Toad GoF pattern
  */
 export function getToadBoard(boardSize: number): Board {
-  const pattern = [
-    [0, 0, 0, 0],
-    [0, 1, 1, 1],
-    [1, 1, 1, 0],
-    [0, 0, 0, 0],
-  ];
-
-  return getNewBoard(boardSize, mappingFnPattern(pattern, boardSize));
+  return getNewBoard(boardSize, mappingFnPattern(toad, boardSize));
 }
 
 /**
  * Get a new board with a Beacon GoF pattern
  */
 export function getBeaconBoard(boardSize: number): Board {
-  const pattern = [
-    [1, 1, 0, 0],
-    [1, 1, 0, 0],
-    [0, 0, 1, 1],
-    [0, 0, 1, 1],
-  ];
-
-  return getNewBoard(boardSize, mappingFnPattern(pattern, boardSize));
+  return getNewBoard(boardSize, mappingFnPattern(beacon, boardSize));
 }
 
 /**
  * Get a new board with a Pulsar GoF pattern
  */
 export function getPulsarBoard(boardSize: number): Board {
-  const pattern = [
-    [0, 0, 1, 1, 1, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0],
-    [1, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 1],
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 1, 1, 1, 0, 0],
-  ];
-
-  return getNewBoard(boardSize, mappingFnPattern(pattern, boardSize));
+  return getNewBoard(boardSize, mappingFnPattern(pulsar, boardSize));
 }
 
 /**
  * Get a new board with a Glider Gun GoF pattern
  */
 export function getGliderGunBoard(boardSize: number): Board {
-  const pattern = [
-    [0, 0, 0, 0, 1, 1, 0, 0, 0],
-    [0, 0, 0, 0, 1, 1, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 1, 1, 1, 0, 0],
-    [0, 0, 0, 1, 0, 0, 0, 1, 0],
-    [0, 0, 1, 0, 0, 0, 0, 0, 1],
-    [0, 0, 1, 0, 0, 0, 0, 0, 1],
-    [0, 0, 0, 0, 0, 1, 0, 0, 0],
-    [0, 0, 0, 1, 0, 0, 0, 1, 0],
-    [0, 0, 0, 0, 1, 1, 1, 0, 0],
-    [0, 0, 0, 0, 0, 1, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 1, 1, 1, 0, 0, 0, 0],
-    [0, 0, 1, 1, 1, 0, 0, 0, 0],
-    [0, 1, 0, 0, 0, 1, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 1, 0, 0, 0, 1, 1, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 1, 1, 0, 0, 0, 0, 0],
-    [0, 0, 1, 1, 0, 0, 0, 0, 0],
-  ];
-
-  return getNewBoard(boardSize, mappingFnPattern(pattern, boardSize));
+  return getNewBoard(boardSize, mappingFnPattern(gliderGun, boardSize));
 }
 
 /**
