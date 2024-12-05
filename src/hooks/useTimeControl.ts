@@ -15,5 +15,5 @@ export function useTimeControl(callback: () => void) {
     }
   }, [isStopped, start, stop]);
 
-  return { isStopped, toggle, stop, speed, setSpeed };
+  return { isRunning: !isStopped, toggle, stop, speed, setSpeed };
 }

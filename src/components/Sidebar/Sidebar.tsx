@@ -14,7 +14,7 @@ import { useGame } from "~/contexts/Game";
 import { TimeTravel } from "../TimeTravel";
 
 export function Sidebar() {
-  const { generationCount, goNext, isStopped, setSpeed, speed, toggle } =
+  const { generationCount, goNext, isRunning, setSpeed, speed, toggle } =
     useGame();
 
   // Store live values to keep the UI in sync
@@ -61,20 +61,20 @@ export function Sidebar() {
 
         <HStack>
           <Button onClick={toggle} className={css({ flex: 1 })}>
-            {isStopped ? (
+            {isRunning ? (
               <>
-                <Play /> Start
+                <Pause /> Pause
               </>
             ) : (
               <>
-                <Pause /> Pause
+                <Play /> Start
               </>
             )}
           </Button>
 
           <Button
             onClick={goNext}
-            disabled={!isStopped}
+            disabled={isRunning}
             className={css({ flex: 1 })}
           >
             <RedoDot /> Next
@@ -85,7 +85,7 @@ export function Sidebar() {
       <Stack>
         <TimeTravel />
         <b>Generation n° {generationCount ?? 0}</b>
-        <Export disabled={!isStopped} />
+        <Export disabled={isRunning} />
       </Stack>
     </Stack>
   );

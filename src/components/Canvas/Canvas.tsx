@@ -5,7 +5,7 @@ import type { Cell } from "~/utils/board";
 import { drawBoard, getCellFromCanvasEvent } from "~/utils/canvas";
 
 export function Canvas({ dimensions }: Props) {
-  const { board, boardSize, flipCell, isStopped } = useGame();
+  const { board, boardSize, flipCell, isRunning } = useGame();
   const [isMouseDown, setIsMouseDown] = React.useState(false);
 
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
@@ -61,7 +61,7 @@ export function Canvas({ dimensions }: Props) {
    */
   React.useEffect(() => {
     return checkCanvas((canvas) => {
-      if (!isMouseDown || !isStopped) {
+      if (!isMouseDown || isRunning) {
         // Mouse is up or game is running => abort
         return;
       }
@@ -92,7 +92,7 @@ export function Canvas({ dimensions }: Props) {
         canvas.removeEventListener("mousemove", handleMouseMove);
       };
     });
-  }, [checkCanvas, flipCell, isMouseDown, boardSize, isStopped]);
+  }, [checkCanvas, flipCell, isMouseDown, boardSize, isRunning]);
 
   /*
    * Flip cell on mouse click
@@ -101,17 +101,13 @@ export function Canvas({ dimensions }: Props) {
    */
   React.useEffect(() => {
     return checkCanvas((canvas) => {
-      if (!isStopped) {
+      if (isRunning) {
         // Game is running => abort
         return;
       }
 
       const handleClick = (evt: MouseEvent) => {
         checkCanvas((canvas) => {
-          if (!isStopped) {
-            return;
-          }
-
           const cell = getCellFromCanvasEvent(evt, canvas, boardSize);
 
           if (!cell) {
@@ -135,7 +131,7 @@ export function Canvas({ dimensions }: Props) {
         canvas.removeEventListener("click", handleClick);
       };
     });
-  }, [checkCanvas, flipCell, boardSize, isStopped]);
+  }, [checkCanvas, flipCell, boardSize, isRunning]);
 
   return (
     <canvas

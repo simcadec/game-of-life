@@ -4,7 +4,7 @@ import { Slider } from "~/components/ui/slider";
 import { useGame } from "~/contexts/Game";
 
 export function TimeTravel() {
-  const { isStopped, goTo, generationCount } = useGame();
+  const { isRunning, goTo, generationCount } = useGame();
 
   // Used to temporally store the current generation count
   const [generationInternal, setGenerationInternal] = React.useState(
@@ -12,17 +12,17 @@ export function TimeTravel() {
   );
 
   React.useEffect(() => {
-    if (generationCount == null || !isStopped) {
+    if (generationCount == null || isRunning) {
       // Reset if at the initial board state, or running
       setGenerationInternal(0);
     } else if (generationCount > generationInternal) {
       // Update to the latest generation if it go beyond the current one
       setGenerationInternal(generationCount ?? 0);
     }
-  }, [generationCount, generationInternal, isStopped]);
+  }, [generationCount, generationInternal, isRunning]);
 
   // Display TimeTravel only when the game is stopped and board has at least one generation
-  if (!isStopped || generationCount == null) {
+  if (isRunning || generationCount == null) {
     return null;
   }
 

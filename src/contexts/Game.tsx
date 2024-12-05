@@ -53,7 +53,7 @@ export function GameProvider({ children }: ProviderProps) {
     [generationReset],
   );
 
-  const { speed, setSpeed, toggle, isStopped, stop } = useTimeControl(goNext);
+  const { speed, setSpeed, toggle, isRunning, stop } = useTimeControl(goNext);
 
   const resetHelper = React.useCallback(
     (board: Board) => {
@@ -146,7 +146,7 @@ export function GameProvider({ children }: ProviderProps) {
         generationCount,
         goNext,
         goTo,
-        isStopped,
+        isRunning,
         reset,
         setSpeed,
         speed,
@@ -177,7 +177,7 @@ type ContextType = {
   generationCount: number | null;
   goNext: () => void;
   goTo: (number: number) => void;
-  isStopped: boolean;
+  isRunning: boolean;
   reset: (values: ResetValues) => void;
   setSpeed: (speed: number) => void;
   speed: number;
