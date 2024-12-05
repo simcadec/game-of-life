@@ -5,7 +5,7 @@ import type { Cell } from "~/utils/board";
 import { drawBoard, getCellFromCanvasEvent } from "~/utils/canvas";
 
 export function Canvas({ dimensions }: Props) {
-  const { board, boardSize, flipCell } = useGame();
+  const { board, boardSize, flipCell, isStopped } = useGame();
   const [isMouseDown, setIsMouseDown] = React.useState(false);
 
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
@@ -61,8 +61,8 @@ export function Canvas({ dimensions }: Props) {
    */
   React.useEffect(() => {
     return checkCanvas((canvas) => {
-      if (!isMouseDown) {
-        // Mouse is up
+      if (!isMouseDown || !isStopped) {
+        // Mouse is up or game is running => abort
         return;
       }
 
@@ -92,36 +92,54 @@ export function Canvas({ dimensions }: Props) {
         canvas.removeEventListener("mousemove", handleMouseMove);
       };
     });
-  }, [checkCanvas, flipCell, isMouseDown, boardSize]);
+  }, [checkCanvas, flipCell, isMouseDown, boardSize, isStopped]);
 
   /*
    * Flip cell on mouse click
    *
    * click event is always fired after mouse up
    */
-  const handleClick = (evt: React.MouseEvent) => {
-    checkCanvas((canvas) => {
-      const cell = getCellFromCanvasEvent(evt, canvas, boardSize);
-
-      if (!cell) {
+  React.useEffect(() => {
+    return checkCanvas((canvas) => {
+      if (!isStopped) {
+        // Game is running => abort
         return;
       }
 
-      // No `lastFlippedCell` means there was no mousemove
-      if (!lastFlippedCell.current) {
-        // no move => was a simple click => flip the cell
-        flipCell(cell);
-      }
+      const handleClick = (evt: MouseEvent) => {
+        checkCanvas((canvas) => {
+          if (!isStopped) {
+            return;
+          }
 
-      lastFlippedCell.current = null;
+          const cell = getCellFromCanvasEvent(evt, canvas, boardSize);
+
+          if (!cell) {
+            return;
+          }
+
+          // No `lastFlippedCell` means there was no mousemove
+          if (!lastFlippedCell.current) {
+            // no move => was a simple click => flip the cell
+            flipCell(cell);
+          }
+
+          // Clean
+          lastFlippedCell.current = null;
+        });
+      };
+
+      canvas.addEventListener("click", handleClick);
+
+      return () => {
+        canvas.removeEventListener("click", handleClick);
+      };
     });
-  };
+  }, [checkCanvas, flipCell, boardSize, isStopped]);
 
   return (
-    // biome-ignore lint/a11y/useKeyWithClickEvents: it is enough for now, keyboard movement is not a priority
     <canvas
       ref={canvasRef}
-      onClick={handleClick}
       width={`${dimensions.width}px`}
       height={`${dimensions.height}px`}
     />
