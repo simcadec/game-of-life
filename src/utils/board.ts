@@ -51,6 +51,19 @@ export function getNextBoard(board: Board): Board {
 }
 
 /**
+ * Get a new board by applying N iterations
+ */
+export function getBoardIteration(board: Board, iteration: number): Board {
+  let newBoard = board;
+
+  for (let i = 1; i <= iteration; i++) {
+    newBoard = getNextBoard(newBoard);
+  }
+
+  return newBoard;
+}
+
+/**
  * Flip a cell in a board
  */
 export function flipBoardCell(board: Board, cell: Cell): Board {

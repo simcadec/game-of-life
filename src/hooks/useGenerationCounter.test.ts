@@ -3,9 +3,9 @@ import { describe, expect, it } from "vitest";
 import { useGenerationCounter } from "./useGenerationCounter";
 
 describe("useGenerationCounter", () => {
-  it("should initialize with a count of 0", () => {
+  it("should initialize with a null value", () => {
     const { result } = renderHook(() => useGenerationCounter());
-    expect(result.current.generationCount).toBe(0);
+    expect(result.current.generationCount).toBe(null);
   });
 
   it("should increment the count by 1 when generationIncrement is called", () => {
@@ -16,12 +16,12 @@ describe("useGenerationCounter", () => {
     expect(result.current.generationCount).toBe(1);
   });
 
-  it("should reset the count to 0 by default when generationReset is called without arguments", () => {
+  it("should reset the count to null by default when generationReset is called without arguments", () => {
     const { result } = renderHook(() => useGenerationCounter());
     act(() => {
       result.current.generationReset();
     });
-    expect(result.current.generationCount).toBe(0);
+    expect(result.current.generationCount).toBe(null);
   });
 
   it("should reset the count to a specified value when generationReset is called", () => {

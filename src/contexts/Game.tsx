@@ -10,6 +10,7 @@ import {
   flipBoardCell,
   getBeaconBoard,
   getBlinkerBoard,
+  getBoardIteration,
   getCheckeredBoard,
   getGliderBoard,
   getGliderGunBoard,
@@ -31,6 +32,7 @@ export function GameProvider({ children }: ProviderProps) {
     useGenerationCounter();
 
   const [board, setBoard] = React.useState(DEFAULT_BOARD);
+  const initialBoardRef = React.useRef<Board>(board); // Store the initial board used
 
   /**
    * Go to the next generation
@@ -40,11 +42,31 @@ export function GameProvider({ children }: ProviderProps) {
     generationIncrement();
   }, [board, generationIncrement]);
 
+  /**
+   * Go to a specific generation
+   */
+  const timeTravelTo = React.useCallback(
+    (number: number) => {
+      setBoard(getBoardIteration(initialBoardRef.current, number));
+      generationReset(number);
+    },
+    [generationReset],
+  );
+
   const { speed, setSpeed, toggle, isStopped, stop } =
     useTimeControl(applyNextGeneration);
 
+  const resetBoardHelper = React.useCallback(
+    (board: Board) => {
+      setBoard(board);
+      initialBoardRef.current = board;
+      generationReset();
+    },
+    [generationReset],
+  );
+
   /**
-   * Reset the current board, with a new size and pattern
+   * Reset the game, with a new board, size and pattern
    */
   const resetBoard = React.useCallback(
     (values: BoardReset) => {
@@ -90,32 +112,30 @@ export function GameProvider({ children }: ProviderProps) {
             fn = getNewBoard;
         }
 
-        setBoard(fn(values.size));
-        generationReset();
+        resetBoardHelper(fn(values.size));
       }
       // Process reset from file
       else {
         const reader = new FileReader();
         reader.onload = (e) => {
-          const jsonData = JSON.parse(e.target?.result as string);
-
-          setBoard(jsonData);
-          generationReset();
+          resetBoardHelper(JSON.parse(e.target?.result as string));
         };
         reader.readAsText(values.file);
       }
     },
-    [stop, generationReset],
+    [stop, resetBoardHelper],
   );
 
   /**
    * Flip a cell of the current board
+   * It will reset the game
    */
   const flipCell = React.useCallback(
     (cell: Cell) => {
-      setBoard(flipBoardCell(board, cell));
+      const newBoard = flipBoardCell(board, cell);
+      resetBoardHelper(newBoard);
     },
-    [board],
+    [board, resetBoardHelper],
   );
 
   return (
@@ -126,6 +146,7 @@ export function GameProvider({ children }: ProviderProps) {
         flipCell,
         generationCount,
         applyNextGeneration,
+        timeTravelTo,
         isStopped,
         resetBoard,
         setSpeed,
@@ -151,16 +172,17 @@ type BoardReset =
   | { base: Extract<BaseBoard, "file">; file: File };
 
 type ContextType = {
-  speed: number;
-  setSpeed: (speed: number) => void;
-  toggle: () => void;
-  isStopped: boolean;
-  board: Board;
-  flipCell: (cell: Cell) => void;
-  generationCount: number;
   applyNextGeneration: () => void;
+  board: Board;
   boardSize: number;
+  flipCell: (cell: Cell) => void;
+  generationCount: number | null;
+  isStopped: boolean;
   resetBoard: (values: BoardReset) => void;
+  setSpeed: (speed: number) => void;
+  speed: number;
+  timeTravelTo: (number: number) => void;
+  toggle: () => void;
 };
 
 type ProviderProps = React.PropsWithChildren;

@@ -11,6 +11,7 @@ import { Button } from "~/components/ui/button";
 import { Heading } from "~/components/ui/heading";
 import { Slider } from "~/components/ui/slider";
 import { useGame } from "~/contexts/Game";
+import { TimeTravel } from "../TimeTravel";
 
 export function Sidebar() {
   const {
@@ -88,7 +89,8 @@ export function Sidebar() {
       </div>
 
       <Stack>
-        <b>Generation n° {generationCount}</b>
+        <TimeTravel />
+        <b>Generation n° {generationCount ?? 0}</b>
         <Export disabled={!isStopped} />
       </Stack>
     </Stack>

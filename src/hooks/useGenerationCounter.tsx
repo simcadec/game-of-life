@@ -1,13 +1,17 @@
 import * as React from "react";
 
-type CounterAction = { type: "INCREMENT" } | { type: "RESET"; payload: number };
+type CounterAction =
+  | { type: "INCREMENT" }
+  | { type: "RESET"; payload: CounterState };
 
-const initialState = 0;
+// null is a special value that represents the initial Board generation, when no generation has been done yet
+// Useful to distinguish a board with no generation from a board time traveled to generation 0
+type CounterState = number | null;
 
-const counterReducer = (state: number, action: CounterAction): number => {
+const reducer = (state: CounterState, action: CounterAction): CounterState => {
   switch (action.type) {
     case "INCREMENT":
-      return state + 1;
+      return state ? state + 1 : 1;
     case "RESET":
       return action.payload;
     default:
@@ -16,16 +20,13 @@ const counterReducer = (state: number, action: CounterAction): number => {
 };
 
 export function useGenerationCounter() {
-  const [generationCount, dispatch] = React.useReducer(
-    counterReducer,
-    initialState,
-  );
+  const [generationCount, dispatch] = React.useReducer(reducer, null);
 
   const generationIncrement = React.useCallback(() => {
     dispatch({ type: "INCREMENT" });
   }, []);
 
-  const generationReset = React.useCallback((value = 0) => {
+  const generationReset = React.useCallback((value: CounterState = null) => {
     dispatch({ type: "RESET", payload: value });
   }, []);
 

@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { getClonedBoard, getNewBoard, getNextBoard } from "./board";
+import {
+  getBoardIteration,
+  getClonedBoard,
+  getNewBoard,
+  getNextBoard,
+} from "./board";
 
 describe("getNewBoard", () => {
   it("should initialize an empty board by default", () => {
@@ -43,6 +48,32 @@ describe("getNextBoard", () => {
       [false, true, false],
       [false, true, false],
       [false, true, false],
+    ]);
+  });
+});
+
+describe("getBoardIteration", () => {
+  const board = [
+    [false, true, false],
+    [true, true, true],
+    [false, true, false],
+  ];
+
+  it("should return a board with the values of the given board at the specified iteration", () => {
+    expect(getBoardIteration(board, 1)).eql([
+      [true, true, true],
+      [true, false, true],
+      [true, true, true],
+    ]);
+    expect(getBoardIteration(board, 2)).eql([
+      [true, false, true],
+      [false, false, false],
+      [true, false, true],
+    ]);
+    expect(getBoardIteration(board, 3)).eql([
+      [false, false, false],
+      [false, false, false],
+      [false, false, false],
     ]);
   });
 });
