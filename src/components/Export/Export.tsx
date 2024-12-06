@@ -1,14 +1,14 @@
 import { Archive } from "lucide-react";
 
 import { Button } from "~/components/ui/button";
-import { useGame } from "~/contexts/Game";
+import { useBoard } from "~/contexts/Game";
 
 type Props = {
   disabled?: boolean;
 };
 
 export function Export({ disabled }: Props) {
-  const { board } = useGame();
+  const { board } = useBoard();
 
   const handleDownload = () => {
     // Convert the board into a JSON string

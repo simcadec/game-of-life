@@ -25,7 +25,15 @@ import {
 const DEFAULT_GRID = 50;
 const DEFAULT_BOARD = getNewBoard(DEFAULT_GRID);
 
-const GameContext = React.createContext<ContextType | undefined>(undefined);
+// BoardContext is used to access the board and its derived values/functions
+// This context is frequently updated, typically at every new generation or board modification
+const BoardContext = React.createContext<BoardContextType | undefined>(
+  undefined,
+);
+
+// GameContext is used to access all others values/functions
+// This context will not be updated at each generation
+const GameContext = React.createContext<GameContextType | undefined>(undefined);
 
 export function GameProvider({ children }: ProviderProps) {
   const { generationIncrement, generationReset, generationCount } =
@@ -137,23 +145,36 @@ export function GameProvider({ children }: ProviderProps) {
     [board, resetHelper],
   );
 
+  const boardSize = board.length;
+
+  const boardContextValues = React.useMemo(
+    () => ({
+      board,
+      flipCell,
+      goNext,
+      generationCount,
+    }),
+    [board, flipCell, generationCount, goNext],
+  );
+
+  const gameContextValues = React.useMemo(
+    () => ({
+      boardSize,
+      goTo,
+      isRunning,
+      reset,
+      setSpeed,
+      speed,
+      toggle,
+    }),
+    [boardSize, goTo, isRunning, reset, setSpeed, speed, toggle],
+  );
+
   return (
-    <GameContext.Provider
-      value={{
-        board,
-        boardSize: board.length,
-        flipCell,
-        generationCount,
-        goNext,
-        goTo,
-        isRunning,
-        reset,
-        setSpeed,
-        speed,
-        toggle,
-      }}
-    >
-      {children}
+    <GameContext.Provider value={gameContextValues}>
+      <BoardContext.Provider value={boardContextValues}>
+        {children}
+      </BoardContext.Provider>
     </GameContext.Provider>
   );
 }
@@ -165,17 +186,26 @@ export function useGame() {
   }
   return context;
 }
+export function useBoard() {
+  const context = React.useContext(BoardContext);
+  if (context === undefined) {
+    throw new Error("useBoard must be used within a GameProvider");
+  }
+  return context;
+}
 
 type ResetValues =
   | { base: Exclude<BaseBoard, "file">; size: number }
   | { base: Extract<BaseBoard, "file">; file: File };
 
-type ContextType = {
+type BoardContextType = {
   board: Board;
-  boardSize: number;
   flipCell: (cell: Cell) => void;
-  generationCount: number | null;
   goNext: () => void;
+  generationCount: number | null;
+};
+type GameContextType = {
+  boardSize: number;
   goTo: (number: number) => void;
   isRunning: boolean;
   reset: (values: ResetValues) => void;

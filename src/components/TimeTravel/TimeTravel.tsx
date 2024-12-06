@@ -1,10 +1,11 @@
 import * as React from "react";
 
 import { Slider } from "~/components/ui/slider";
-import { useGame } from "~/contexts/Game";
+import { useBoard, useGame } from "~/contexts/Game";
 
 export function TimeTravel() {
-  const { isRunning, goTo, generationCount } = useGame();
+  const { isRunning, goTo } = useGame();
+  const { generationCount } = useBoard();
 
   // Used to temporally store the current generation count
   const [generationInternal, setGenerationInternal] = React.useState(

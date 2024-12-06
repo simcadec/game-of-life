@@ -1,11 +1,12 @@
 import * as React from "react";
 
-import { useGame } from "~/contexts/Game";
+import { useBoard, useGame } from "~/contexts/Game";
 import type { Cell } from "~/utils/board";
 import { drawBoard, getCellFromCanvasEvent } from "~/utils/canvas";
 
 export function Canvas({ dimensions }: Props) {
-  const { board, boardSize, flipCell, isRunning } = useGame();
+  const { board, flipCell } = useBoard();
+  const { boardSize, isRunning } = useGame();
   const [isMouseDown, setIsMouseDown] = React.useState(false);
 
   const canvasRef = React.useRef<HTMLCanvasElement>(null);

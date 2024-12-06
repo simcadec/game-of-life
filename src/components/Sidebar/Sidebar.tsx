@@ -1,21 +1,25 @@
-import * as React from "react";
-
-import { Pause, Play, RedoDot } from "lucide-react";
+import { Pause, Play } from "lucide-react";
 
 import { css } from "styled-system/css";
 import { HStack, Stack } from "styled-system/jsx";
 
 import { Export } from "~/components/Export";
+import { NextButton } from "~/components/NextButton";
 import { ResetForm } from "~/components/ResetForm";
+import { SliderSpeed } from "~/components/SliderSpeed";
+import { TimeTravel } from "~/components/TimeTravel";
 import { Button } from "~/components/ui/button";
 import { Heading } from "~/components/ui/heading";
-import { Slider } from "~/components/ui/slider";
-import { useGame } from "~/contexts/Game";
-import { TimeTravel } from "../TimeTravel";
+import { useBoard, useGame } from "~/contexts/Game";
+
+function Generation() {
+  const { generationCount } = useBoard();
+
+  return <b>Generation n° {generationCount ?? 0}</b>;
+}
 
 export function Sidebar() {
-  const { generationCount, goNext, isRunning, setSpeed, speed, toggle } =
-    useGame();
+  const { isRunning, setSpeed, speed, toggle } = useGame();
 
   return (
     <Stack css={{ bg: "bg.default", p: 3, justifyContent: "space-between" }}>
@@ -49,59 +53,15 @@ export function Sidebar() {
             )}
           </Button>
 
-          <Button
-            onClick={goNext}
-            disabled={isRunning}
-            className={css({ flex: 1 })}
-          >
-            <RedoDot /> Next
-          </Button>
+          <NextButton />
         </HStack>
       </div>
 
       <Stack>
         <TimeTravel />
-        <b>Generation n° {generationCount ?? 0}</b>
+        <Generation />
         <Export disabled={isRunning} />
       </Stack>
     </Stack>
   );
 }
-
-// Slider are complex components and need to be optimized
-const SliderSpeed = React.memo(function SliderSpeed({
-  speed,
-  onValueChangeEnd,
-}: SliderSpeedProps) {
-  // Store live values to keep the UI in sync
-  const [formSpeed, setFormSpeed] = React.useState(speed);
-
-  return (
-    <Slider
-      defaultValue={[speed]}
-      min={10}
-      max={2000}
-      onValueChangeEnd={(details) => {
-        onValueChangeEnd(details.value[0]);
-      }}
-      onValueChange={(details) => {
-        setFormSpeed(details.value[0]);
-      }}
-      step={10}
-      marks={[
-        { value: 10, label: "0.01s" },
-        { value: 500, label: "0.5s" },
-        { value: 1000, label: "1s" },
-        { value: 2000, label: "2s" },
-      ]}
-      css={{ mb: 12, colorPalette: formSpeed <= 200 ? "red" : undefined }}
-    >
-      Speed {formSpeed}ms - {Number(1000 / formSpeed).toFixed(2)} FPS
-    </Slider>
-  );
-});
-
-type SliderSpeedProps = {
-  speed: number;
-  onValueChangeEnd: (speed: number) => void;
-};
