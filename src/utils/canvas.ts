@@ -1,5 +1,9 @@
 import type { Board } from "./board";
 
+const COLOR_ALIVE = "orange";
+const COLOR_DEAD = "#ffffff";
+const COLOR_BORDER = "#dddddd";
+
 /**
  * Draw a board on a canvas
  */
@@ -15,27 +19,27 @@ export function drawBoard(canvas: HTMLCanvasElement, board: Board) {
   const cellBorder = boardSize > 100 ? 0 : 1;
 
   const domRect = canvas.getBoundingClientRect();
-  const cellOuterSize = Math.min(domRect.width, domRect.height) / boardSize;
+  const drawingZoneSize = Math.min(domRect.width, domRect.height);
+  const cellOuterSize = drawingZoneSize / boardSize;
   const cellSize = cellOuterSize - cellBorder;
 
   // Clear the canvas
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, drawingZoneSize - 1, drawingZoneSize - 1);
 
-  // fill all the canvas with the cell border color
-  ctx.fillStyle = "#dddddd";
-  ctx.fillRect(
-    0,
-    0,
-    cellOuterSize * boardSize - 1,
-    cellOuterSize * boardSize - 1,
-  );
+  // Draw the grid
+  if (boardSize <= 250) {
+    drawBoardGrid(ctx, cellOuterSize, boardSize);
+  }
 
-  // for each cell
+  // Draw the cells
   for (let x = 0; x < boardSize; x++) {
     for (let y = 0; y < boardSize; y++) {
-      // draw the cell, with some space as borders
-      ctx.fillStyle = board[x][y] ? "orange" : "#ffffff";
-      ctx.fillRect(x * cellOuterSize, y * cellOuterSize, cellSize, cellSize);
+      // Do not draw dead cells!
+      if (board[x][y]) {
+        ctx.fillStyle = board[x][y] ? COLOR_ALIVE : COLOR_DEAD;
+        ctx.fillRect(x * cellOuterSize, y * cellOuterSize, cellSize, cellSize);
+      }
     }
   }
 
@@ -68,4 +72,24 @@ export function getCellFromCanvasEvent(
   }
 
   return { x, y };
+}
+
+function drawBoardGrid(
+  ctx: CanvasRenderingContext2D,
+  spacing: number,
+  boardSize: number,
+) {
+  ctx.beginPath();
+
+  for (let x = 1; x < boardSize; x++) {
+    ctx.moveTo(x * spacing, 0);
+    ctx.lineTo(x * spacing, boardSize * spacing - 1);
+  }
+  for (let y = 1; y < boardSize; y++) {
+    ctx.moveTo(0, y * spacing);
+    ctx.lineTo(boardSize * spacing - 1, y * spacing);
+  }
+
+  ctx.strokeStyle = COLOR_BORDER;
+  ctx.stroke();
 }
